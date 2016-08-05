@@ -1,3 +1,0 @@
-# -*- mode: shell-script -*-
-
-NEO4J_VERSION=<the-version-you-want-to-test-against>

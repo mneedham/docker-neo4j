@@ -24,6 +24,10 @@ RUN mv data /data \
 VOLUME /data
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY trumpworld.cql /var/lib/neo4j/import/trumpworld.cql
+
+COPY neo4j-wait.sh /var/lib/neo4j/neo4j-wait.sh
+RUN chmod 700 /var/lib/neo4j/neo4j-wait.sh
 
 EXPOSE 7474 7473 7687
 

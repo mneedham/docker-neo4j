@@ -51,10 +51,12 @@ tmp/local-context-%/.sentinel: tmp/image-%/.sentinel in/$(call tarball,%,$(NEO4J
 > cp $(filter %.tar.gz,$^) $(@D)/local-package
 > touch $@
 
-tmp/image-%/.sentinel: src/$(series)/Dockerfile src/$(series)/docker-entrypoint.sh \
+tmp/image-%/.sentinel: src/$(series)/Dockerfile src/$(series)/docker-entrypoint.sh src/$(series)/neo4j-wait.sh src/$(series)/trumpworld.cql \
                        $(env_NEO4J_VERSION) in/$(call tarball,%,$(NEO4J_VERSION))
 > mkdir -p $(@D)
 > cp $(filter %/docker-entrypoint.sh,$^) $(@D)/docker-entrypoint.sh
+> cp $(filter %/neo4j-wait.sh,$^) $(@D)/neo4j-wait.sh
+> cp $(filter %/trumpworld.cql,$^) $(@D)/trumpworld.cql
 > sha=$$(shasum --algorithm=256 $(filter %.tar.gz,$^) | cut -d' ' -f1)
 > <$(filter %/Dockerfile,$^) sed \
     -e "s|%%NEO4J_SHA%%|$${sha}|" \

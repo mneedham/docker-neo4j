@@ -23,19 +23,7 @@ if [ "$1" == "neo4j" ]; then
     setting "dbms.unmanaged_extension_classes" "${NEO4J_dbms_unmanagedExtensionClasses:-}"
     setting "dbms.allow_format_migration" "${NEO4J_dbms_allowFormatMigration:-}"
 
-    if [ "${NEO4J_AUTH:-}" == "none" ]; then
-        setting "dbms.security.auth_enabled" "false"
-    elif [[ "${NEO4J_AUTH:-}" == neo4j/* ]]; then
-        password="${NEO4J_AUTH#neo4j/}"
-        if [ "${password}" == "neo4j" ]; then
-            echo "Invalid value for password. It cannot be 'neo4j', which is the default."
-            exit 1
-        fi
-        bin/neo4j-admin set-initial-password "${password}"
-    elif [ -n "${NEO4J_AUTH:-}" ]; then
-        echo "Invalid value for NEO4J_AUTH: '${NEO4J_AUTH}'"
-        exit 1
-    fi
+    setting "dbms.security.auth_enabled" "false"
 
     setting "dbms.connectors.default_listen_address" "0.0.0.0"
     setting "dbms.connector.http.listen_address" "0.0.0.0:7474"
@@ -71,7 +59,8 @@ if [ "$1" == "neo4j" ]; then
         setting "dbms.directories.logs" "/logs" neo4j.conf
     fi
 
-    exec bin/neo4j console
+    bin/neo4j start && /var/lib/neo4j/neo4j-wait.sh && bin/cypher-shell --user neo4j < /var/lib/neo4j/import/trumpworld.cql && bin/neo4j stop && exec bin/neo4j console
+
 elif [ "$1" == "dump-config" ]; then
     if [ -d /conf ]; then
         cp --recursive conf/* /conf
